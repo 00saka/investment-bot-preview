@@ -1,21 +1,27 @@
+Sijoitusbotti (Julkinen esiversio)
+Tämä ohjelma on yksinkertaistettu ja obfuskoitu versio henkilökohtaisesta sijoitusbotista, joka analysoi markkinadataa ja antaa osto- tai myyntisuosituksia. Varsinaista sijoittamista ei tapahdu automaattisesti, vaan ohjelma välittää suosituksia Telegramin kautta.
 
-# Sijoitusbotti (Julkinen versio)
+Toiminnot
+Lataa ajankohtaiset osaketiedot API:n kautta
 
-Tämä on sijoitusalgoritmiin perustuvan järjestelmän julkinen, yksinkertaistettu versio. Ohjelma analysoi markkinadataa ja laatii ehdotuksia osto- tai myyntiajankohdista. Algoritmi ottaa huomioon useita mittareita, tallentaa osakkeiden ostohinnan analysointia varten ja huomioi vain omistetut instrumentit myyntisuosituksissa.
+Analysoi tietoja sisäisten laskentaperiaatteiden mukaan
 
-Telegram-botti toimii ilmoituskanavana, mutta ei tarjoa ohjelman hallintamahdollisuuksia. Tärkeimmät toimintalogiikat ja kaavat on poistettu tai yksinkertaistettu, eikä kaikkia analyysimenetelmiä ole julkaistu tässä versiossa.
+Antaa osto- tai myyntisuosituksia valittujen osakkeiden tai ETF:ien perusteella
 
-## Ominaisuudet
-- Yksinkertaistettu datankeruu ja käsittely
-- Tukea useille instrumenteille (ETF:t ja osakkeet)
-- Ostohintojen seuranta
-- Telegram-ilmoitukset (vain ilmoitukset, ei ohjausta)
-- Salattu API-avainkäsittely erillistiedostossa
+Lähettää suositukset Telegram-viestinä
 
-## Huomioitavaa
+Muistaa omistusten ostohinnat ja huomioi ne analyysissä
 
-Tämä versio ei edusta koko ohjelmiston toiminnallisuutta. Koodi on osittain obfuskoitu ja tarkoitettu vain rakenteen havainnollistamiseen.
+⚠️ Tämä versio ei sisällä ohjelman täydellistä logiikkaa tai laskentakaavoja.
 
-**All rights reserved.**
+Yksityisyys ja turvallisuus
+API-avaimia tai tunnistetietoja ei ole sisällytetty tiedostoon. Täydellinen versio käyttää salattua ulkoista avaintiedostoa, jota ei julkaista.
 
-Ohjelman täydet oikeudet ja käyttöoikeudet pidätetään. Tämä versio ei ole avoimen lähdekoodin lisenssillä.
+Huomioitavaa
+Tämä versio on tarkoitettu ainoastaan demonstroimaan ohjelmointitaitoja.
+
+Ohjelma ei sisällä kaikkea alkuperäistä toiminnallisuutta tai logiikkaa.
+
+Suositukset eivät ole sijoitusneuvoja.
+
+© 2025 Ralf Isorinne. All rights reserved.
