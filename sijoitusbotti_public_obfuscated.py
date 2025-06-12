@@ -44,14 +44,14 @@ NEWS_API_KEY = None
 
 ETF_DB = "etf_data.db"
 
-OWNED_STOCKS_FILE = "owned_stocks.txt"
-OWNED_ETFS_FILE = "owned_etfs.txt"
-STOCK_TICKERS_FILE = "tickers.txt"
-ETF_TICKERS_FILE = "etf_tickers.txt"
-FAILED_ASSETS_FILE = "failed_assets.json"
-REMOVED_ASSETS_FILE = "removed_assets.txt"
+OWNED_STOCKS_FILE = "....txt"
+OWNED_ETFS_FILE = "....txt"
+STOCK_TICKERS_FILE = "....txt"
+ETF_TICKERS_FILE = "....txt"
+FAILED_ASSETS_FILE = "....json"
+REMOVED_ASSETS_FILE = "....txt"
 
-NEWSAPI_URL = "https://newsapi.org/v2/everything"
+NEWSAPI_URL = "sensuroitu"
 STOCK_NEWS_SOURCES = [
     "bloomberg", "cnbc", "marketwatch", "yahoo finance", "reuters",  
     "wall street journal", "financial times", "forbes", "business insider", "seeking alpha",
@@ -84,16 +84,15 @@ NEGATIVE_KEYWORDS_ETF = [
     "ETF tracking error", "rising management costs"
 ]
 
-NEWS_API_CALLS_LIMIT = 50  # **Maksimi 50 hakua 12h sisällä**
-OWNED_STOCKS_CALLS_LIMIT = 10  # **Omistetuille osakkeille 10 hakua per 12h**
-OWNED_ETFS_CALLS_LIMIT = 10  # **Omistetuille ETF:lle 10 hakua per 12h**
-GENERAL_STOCKS_CALLS_LIMIT = 15  # **Yleisille osakehauille 15 hakua per 12h**
-GENERAL_ETFS_CALLS_LIMIT = 15  # **Yleisille ETF-hauille 15 hakua per 12h**
-TOTAL_API_LIMIT = 50  # **Kokonaisuudessaan 50 hakua per 12h**
-
-LAST_NEWS_FETCH_FILE = "last_news_fetch.json"
-NEWS_API_USAGE_FILE = "news_api_usage.json"
-FETCHED_ASSETS_FILE = "fetched_assets.json"
+#Adjusting limits / säädetään rajoituksia ja lisätään sensuuria
+#
+#
+#
+#
+#
+LAST_NEWS_FETCH_FILE = "...json"
+NEWS_API_USAGE_FILE = "...json"
+FETCHED_ASSETS_FILE = "...json"
 
 def load_assets_from_file(filename):
     """Lataa tiedoston rivit listaksi."""
@@ -362,11 +361,11 @@ def load_company_dict(filename):
     with open(filename, "r", encoding="utf-8") as file:
         return json.load(file)
 
-ASSETS = load_assets_from_file("tickers.txt")
-ETF_TICKERS = load_assets_from_file("etf_tickers.txt")
+ASSETS = load_assets_from_file("....txt")
+ETF_TICKERS = load_assets_from_file("...")
 
-COMPANY_NAME_DICT = load_company_dict("company_name_dict.json")
-ETF_NAME_DICT = load_company_dict("etf_name_dict.json")
+COMPANY_NAME_DICT = load_company_dict("...")
+ETF_NAME_DICT = load_company_dict("...")
 
 MAX_CONCURRENT_REQUESTS = 5 
 
@@ -697,9 +696,6 @@ def update_news_api_usage(call_type):
 def can_fetch_news(asset, asset_type, fetched_assets, owned_assets):
     """
     Varmistaa, voidaanko uutisia hakea tälle osakkeelle tai ETF:lle tänään.
-    
-    - `asset_type`: joko "stock" tai "etf"
-    - `owned_assets`: lista käyttäjän omistamista osakkeista tai ETF:stä
     """
     today = datetime.date.today().isoformat()
     last_fetch_date = fetched_assets.get(asset, "")
@@ -714,7 +710,6 @@ def can_fetch_news(asset, asset_type, fetched_assets, owned_assets):
     return False
 
 def is_valid_asset(asset, filename):
-    """Tarkistaa, löytyykö asset annetusta tiedostosta."""
     if not os.path.exists(filename):
         print(f"⚠️ Virhe: Tiedostoa {filename} ei löydy.")
         return False
@@ -725,22 +720,19 @@ def is_valid_asset(asset, filename):
     return asset.upper() in valid_assets
 
 def get_asset_type(asset):
-    """Tarkistaa, onko asset ETF vai osake `tickers.txt` ja `etf_tickers.txt` perusteella."""
-    if is_valid_asset(asset, "etf_tickers.txt"):
-        return "etf"
-    elif is_valid_asset(asset, "tickers.txt"):
-        return "stock"
+    if is_valid_asset(asset, "...txt"):
+        return "..."
+    elif is_valid_asset(asset, "...txt"):
+        return "..."
     return None  # Jos tunnusta ei löydy mistään
 
 def fetch_stock_news(asset, owned_stocks):
-    """
-    Hakee uutiset **vain osakkeille** ja suodattaa ne hyväksytyistä lähteistä.
-    """
+
     if asset not in owned_stocks:
         print(f"⚠️ {asset}: Ei löydy omistetuista osakkeista, ohitetaan uutishaku.")
         return [], [], []
 
-    print(f"🔍 DEBUG: Aloitetaan osakeuutishaku kohteelle {asset}")
+    print(f"🔍: Aloitetaan osakeuutishaku kohteelle {asset}")
 
     fetched_assets = load_json(LAST_NEWS_FETCH_FILE)
 
@@ -768,7 +760,7 @@ def fetch_stock_news(asset, owned_stocks):
     fetched_assets[asset] = datetime.date.today().isoformat()
     save_json(LAST_NEWS_FETCH_FILE, fetched_assets)
 
-    company_names = load_json("company_name_dict.json")
+    company_names = load_json("....json")
     company_name = company_names.get(asset, asset)
 
     if not isinstance(company_name, str):
@@ -862,7 +854,6 @@ def fetch_stock_news(asset, owned_stocks):
     return [], [], []
 
 def analyze_news_sentiment(news_articles):
-    """Analysoi uutisten sentimentin ja palauttaa kriittiset ja negatiiviset uutiset erikseen."""
     critical_news = []
     negative_news = []
 
@@ -882,7 +873,7 @@ def analyze_news_sentiment(news_articles):
 
         if isinstance(source, dict):
             source_name = source.get("name", "Tuntematon lähde")
-        elif isinstance(source, str):  # Jos lähde on vahingossa jo merkkijono
+        elif isinstance(source, str):
             source_name = source
         else:
             print(f"⚠️ ERROR: `source` tuntematon tietotyyppi: {type(source)} - {source}")
@@ -901,14 +892,12 @@ def analyze_news_sentiment(news_articles):
 REJECTED_NEWS_FILE = "rejected_news.json"
 
 def load_rejected_news():
-    """Lataa hylätyt uutiset tiedostosta."""
     if os.path.exists(REJECTED_NEWS_FILE):
         with open(REJECTED_NEWS_FILE, "r", encoding="utf-8") as file:
             return json.load(file)
     return {}
 
 def save_rejected_news(news_article):
-    """Tallentaa hylätyn uutisen rejected_news.json -tiedostoon."""
     rejected_news = load_rejected_news()
 
     source = news_article.get("source", "Tuntematon lähde")
@@ -935,23 +924,16 @@ def save_rejected_news(news_article):
 
 
 def load_etf_name_dict():
-    """Lataa ETF-nimet JSON-tiedostosta."""
     with open("etf_name_dict.json", "r") as f:
         return json.load(f)
 
 def fetch_etf_news(ticker, owned_etfs):
-    """
-    Hakee uutiset **ETF:lle** ja suodattaa ne hyväksytyistä lähteistä.
-    
-    - **Omistetut ETF:t haetaan `owned_etfs`**
-    - **Mahdollistaa kattavamman analyysin ETF-uutisista**
-    - **Suodattaa vain hyväksytyistä lähteistä tulevat uutiset**
-    """
+   
     if ticker not in owned_etfs:
         print(f"⚠️ {ticker}: Ei löydy omistetuista ETF:istä, ohitetaan uutishaku.")
         return [], [], []
 
-    print(f"🔍 Aloitetaan ETF-uutishaku kohteelle {ticker}")
+    print(f"🔍 Aloitetaan ETF-uutishaku kohteelle {...}")
 
     fetched_etfs = load_json(LAST_NEWS_FETCH_FILE)
 
@@ -1075,7 +1057,6 @@ def fetch_etf_news(ticker, owned_etfs):
 
 
 def analyze_etf_news_sentiment(news_articles):
-    """Analysoi ETF-uutisten sentimentin ja palauttaa kriittiset ja negatiiviset uutiset erikseen."""
     critical_news = []
     negative_news = []
 
@@ -1114,21 +1095,18 @@ def analyze_etf_news_sentiment(news_articles):
 SECTOR_CACHE_FILE = "sector_cache.json"
 
 def load_sector_cache():
-    """🔍 Lataa sektoritiedot sektor_cache.json-tiedostosta."""
     if os.path.exists(SECTOR_CACHE_FILE):
         with open(SECTOR_CACHE_FILE, "r") as file:
             return json.load(file)
     return {}
 
 def save_sector_cache():
-    """🔹 Tallentaa sektoritiedot sektor_cache.json-tiedostoon."""
     with open(SECTOR_CACHE_FILE, "w") as file:
         json.dump(sector_cache, file)
 
 sector_cache = load_sector_cache()  # 🔹 Alustetaan välimuisti
 
 def get_all_sectors(assets):
-    """🔍 Hakee sektoritiedot kaikille osakkeille ja tallentaa ne välimuistiin."""
     print(f"📊 Haetaan sektoritiedot kaikille {len(assets)} osakkeille.")
 
     stocks = {asset: yf.Ticker(asset) for asset in assets}
@@ -1151,8 +1129,7 @@ def get_all_sectors(assets):
     save_sector_cache()  # 🔹 Tallennetaan sektorit välimuistiin
 
 def get_sector(asset):
-    """🔍 Palauttaa osakkeen sektorin välimuistista (JSON)."""
-    
+   
     sector = sector_cache.get(asset, "Tuntematon")  # Haetaan sektori välimuistista
 
     
@@ -1166,7 +1143,6 @@ sector_pe_cache = {}
 sector_pb_cache = {}
 
 def get_sector_averages(sector):
-    """🔎 Laskee annetun sektorin keskimääräisen PE- ja PB-luvun ja tallentaa ne välimuistiin."""
     
     if not isinstance(sector, str) or not sector:
         print(f"❌ ERROR: get_sector_averages() sai virheellisen sektorin: {sector} (tyyppi: {type(sector)})")
@@ -1174,10 +1150,10 @@ def get_sector_averages(sector):
 
     if sector in sector_pe_cache and sector in sector_pb_cache:
         print(f"⚡ Sektorin {sector} keskiarvot löytyivät välimuistista.")
-        return sector_pe_cache[sector], sector_pb_cache[sector]
+        return sector_xxx_cache[sector], sector_xxx_cache[sector]
 
-    pe_values = []
-    pb_values = []
+    xxx_values = []
+    xxx_values = []
 
     sector_assets = [asset for asset, sec in sector_cache.items() if sec == sector]
 
@@ -1222,10 +1198,9 @@ def get_sector_averages(sector):
 
     return sector_avg_pe, sector_avg_pb
 
-sema = asyncio.Semaphore(5)  # Sallitaan enintään 5 samanaikaista pyyntöä
+sema = asyncio.Semaphore(5)  
 
 async def fetch_all_stocks():
-    """Hakee kaikkien osakkeiden tiedot asynkronisesti ja palauttaa ne sanakirjana."""
     all_assets = set(ASSETS)
     results = {}
     failed_assets = load_json(FAILED_ASSETS_FILE)
@@ -1267,7 +1242,6 @@ async def fetch_all_stocks():
     return results
 
 async def get_data_block_async(asset, is_etf=False, retries=3):
-    """Hakee osakkeen tai ETF:n tiedot asynkronisesti Yahoo Financesta aiohttp:n avulla."""
     async with sema:
         for attempt in range(retries):
             try:
@@ -1311,12 +1285,11 @@ async def get_data_block_async(asset, is_etf=False, retries=3):
                 print(f"⚠️ Virhe osakkeen {asset} haussa: {e}")
                 return asset, None
 
-            await asyncio.sleep(min(10, 2 * (attempt + 1)))  # 🔄 Kasvava viive, max 10s
+            await asyncio.sleep(min(10, 2 * (attempt + 1))) 
 
 async def get_data_block():
-    """Hakee osaketiedot asynkronisesti ja käsittelee virhetilanteet."""
     data = {}
-    error_messages = []  # 🔹 Lisätty takaisin virheilmoitusten keräämistä varten
+    error_messages = []  
     failed_assets = load_json(FAILED_ASSETS_FILE)
     removed_assets = load_json(REMOVED_ASSETS_FILE)
 
@@ -1338,13 +1311,13 @@ async def get_data_block():
         if isinstance(hist, list) and hist and not isinstance(hist[0], dict):
             error_message = f"❌ ERROR: {asset} palautti listan, mutta odotettiin sanakirjaa! Sisältö: {hist}"
             print(error_message)
-            error_messages.append(error_message)  # 🔹 Lisätään virheilmoitus listaan
+            error_messages.append(error_message)  
             continue  
 
         if not hist:
             error_message = f"⚠️ DEBUG: {asset}: Ei saatavilla olevaa dataa."
             print(error_message)
-            error_messages.append(error_message)  # 🔹 Lisätään virheilmoitus listaan
+            error_messages.append(error_message)  
             failed_assets[asset] = retry_count + 1
             if failed_assets[asset] >= 3:
                 removal_message = f"❌ DEBUG: {asset} poistetaan seurannasta (3 epäonnistunutta hakua)."
@@ -1361,13 +1334,12 @@ async def get_data_block():
     save_json(FAILED_ASSETS_FILE, failed_assets)
     save_json(REMOVED_ASSETS_FILE, removed_assets)
 
-    return data, error_messages  # 🔹 Palautetaan virheilmoitukset
+    return data, error_messages 
 
-FAILED_ETF_FILE = "failed_etf_queries.json"
-DELISTED_ETF_FILE = "delisted_etfs.txt"
+FAILED_ETF_FILE = "..."
+DELISTED_ETF_FILE = "..."
 
 def track_failed_etf_queries(ticker, success=False):
-    """Seuraa epäonnistuneita ETF-hakuja ja poistaa ne listalta, jos haku onnistuu."""
     
     today = datetime.date.today().isoformat()
     
@@ -1386,7 +1358,7 @@ def track_failed_etf_queries(ticker, success=False):
             del failed_etfs[ticker]
             with open(FAILED_ETF_FILE, "w") as f:
                 json.dump(failed_etfs, f, indent=4)
-        return  # Ei tehdä mitään muuta, koska ETF löytyi
+        return  
 
     if ticker in failed_etfs:
         failed_etfs[ticker]["failures"] += 1
@@ -1404,26 +1376,26 @@ def track_failed_etf_queries(ticker, success=False):
         del failed_etfs[ticker]
 
         message = f"🚨 ETF {ticker} haku epäonnistunut viikon ajan. Poistettu haettavista."
-        asyncio.create_task(send_telegram_message(message))  # Käynnistetään async-tehtävä
+        asyncio.create_task(send_telegram_message(message)) 
 
     with open(FAILED_ETF_FILE, "w") as f:
         json.dump(failed_etfs, f, indent=4)
 
-sema = asyncio.Semaphore(5)  # 🔹 Rajoitetaan samanaikaisia hakuja (max 5 kerrallaan)
+sema = asyncio.Semaphore(5) 
 
 async def fetch_etf_data_async(ticker, retries=3):
     """Hakee yksittäisen ETF:n tiedot asynkronisesti ja yrittää useita kertoja, jos epäonnistuu."""
     async with sema:
         for attempt in range(retries):
             try:
-                timeout = aiohttp.ClientTimeout(total=30)  # 🔥 30s aikakatkaisu
+                timeout = aiohttp.ClientTimeout(total=30)
                 async with aiohttp.ClientSession(timeout=timeout) as session:
                     stock = yf.Ticker(ticker)
                     hist = await asyncio.to_thread(stock.history, period="5d", interval="1d")
 
                     if hist.empty:
                         print(f"⚠️ {ticker}: Ei saatavilla olevaa dataa (yritys {attempt + 1}/{retries})")
-                        await asyncio.sleep(2 * (attempt + 1))  # 🔄 Kasvava viive uusintayritysten välillä
+                        await asyncio.sleep(2 * (attempt + 1)) 
                         continue
 
                     track_failed_etf_queries(ticker, success=True)
@@ -1447,22 +1419,21 @@ async def fetch_etf_data_async(ticker, retries=3):
 
             except asyncio.TimeoutError:
                 print(f"⏳ TIMEOUT: {ticker} - Yahoo Finance ei vastannut ajoissa! Yritys {attempt + 1}/{retries}")
-                await asyncio.sleep(2 * (attempt + 1))  # 🔄 Kasvava viive uusintayritysten välillä
+                await asyncio.sleep(2 * (attempt + 1)) 
 
             except Exception as e:
                 print(f"⚠️ ERROR: {ticker} - Virhe haussa: {e}")
-                await asyncio.sleep(2 * (attempt + 1))  # 🔄 Kasvava viive uusintayritysten välillä
+                await asyncio.sleep(2 * (attempt + 1))  
 
         print(f"❌ ERROR: {ticker} - Ei onnistunut {retries} yrityksen jälkeen.")
-        track_failed_etf_queries(ticker)  # 🔴 Merkitään epäonnistuneeksi
+        track_failed_etf_queries(ticker) 
         return None
 
 async def fetch_latest_etf_data():
-    """Hakee uusimmat ETF-tiedot asynkronisesti ja tallentaa ne."""
     conn = sqlite3.connect(ETF_DB)
     cursor = conn.cursor()
 
-    etf_tickers = load_assets_from_file("etf_tickers.txt")
+    etf_tickers = load_assets_from_file("....txt")
     fetched_data = {}
     error_messages = []
 
@@ -1511,7 +1482,6 @@ async def fetch_latest_etf_data():
     return fetched_data, error_messages
 
 def compare_etf_with_previous_data(ticker):
-    """Vertailee ETF:n nykyisiä arvoja edellisiin merkintöihin ja analysoi trendiä."""
     conn = sqlite3.connect(ETF_DB)
     cursor = conn.cursor()
 
@@ -1537,7 +1507,6 @@ def compare_etf_with_previous_data(ticker):
     return price_dropped, below_5d_avg, below_10d_avg
 
 def get_moving_average_etf(ticker, period=200):
-    """Laskee ETF:n liukuvan keskiarvon SQLiten tiedoista. Täydentää Yahoo Financesta tarvittaessa."""
     conn = sqlite3.connect(ETF_DB)
     cursor = conn.cursor()
 
@@ -1565,7 +1534,6 @@ def get_moving_average_etf(ticker, period=200):
     return moving_avg
 
 def get_macd_etf(ticker):
-    """Laskee ETF:n MACD-indikaattorin, signaalilinjan ja histogrammin käyttäen SQLite-tietoja."""
     conn = sqlite3.connect(ETF_DB)
     cursor = conn.cursor()
 
@@ -1633,7 +1601,6 @@ def get_rsi_etf(ticker, period=14):
     return round(df["RSI"].iloc[-1], 2)
 
 def get_rsi(asset, period=14):
-    """Laskee RSI:n käyttäen SQLite-tietokannan tietoja."""
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
 
@@ -1666,7 +1633,6 @@ def get_rsi(asset, period=14):
     return round(df["RSI"].iloc[-1], 2)
 
 def get_macd(asset):
-    """Laskee MACD-indikaattorin, signaalilinjan ja histogrammin käyttäen SQLite-tietoja."""
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
 
@@ -1681,14 +1647,14 @@ def get_macd(asset):
 
     if len(close_prices) < 26:
         stock = yf.Ticker(asset)
-        hist = stock.history(period="60d")  # Haetaan tarpeeksi dataa MACD-laskentaan
+        hist = stock.history(period="60d")  
         close_prices = hist["Close"].tolist()
 
     if len(close_prices) < 26:
         print(f"❌ ERROR: {asset} - Ei tarpeeksi dataa MACD-laskentaan.")
         return None, None, None
 
-    df = pd.DataFrame({'Close': close_prices[::-1]})  # Käännetään oikeaan järjestykseen
+    df = pd.DataFrame({'Close': close_prices[::-1]})  
     df["EMA12"] = df["Close"].ewm(span=12, adjust=False).mean()
     df["EMA26"] = df["Close"].ewm(span=26, adjust=False).mean()
     df["MACD"] = df["EMA12"] - df["EMA26"]
@@ -1715,20 +1681,19 @@ def get_moving_average(asset, period=200):
 
     if len(close_prices) < period:
         stock = yf.Ticker(asset)
-        hist = stock.history(period=f"{period + 20}d")  # Haetaan vähän ylimääräistä
+        hist = stock.history(period=f"{period + 20}d") 
         close_prices = hist["Close"].tolist()
 
     if len(close_prices) < period:
         print(f"❌ ERROR: {asset} - Ei tarpeeksi dataa {period} päivän keskiarvon laskentaan.")
         return None
 
-    moving_avg = sum(close_prices[:period]) / period  # Lasketaan keskiarvo
+    moving_avg = sum(close_prices[:period]) / period 
     print(f"📊 {asset} - {period} päivän liukuva keskiarvo: {moving_avg:.2f}")
 
     return moving_avg
 
 def get_fundamentals(ticker):
-    """Hakee osakkeen keskeiset fundamenttiarvot Yahoo Financesta turvallisesti."""
     try:
         if not isinstance(ticker, str):
             print(f"⚠️ ERROR: get_fundamentals() sai väärän datatyypin ({type(ticker)}) ticker: {ticker}")
@@ -1770,137 +1735,9 @@ def get_fundamentals(ticker):
         return None, None, None, None
 
 def generate_etf_buy_decision(ticker, etf_data, historical_prices):
-    """Analysoi ETF:n ostomahdollisuudet pisteytysjärjestelmällä."""
     print(f"🔵🔍 Aloitetaan ETF-ostosuositusanalyysi {ticker}")
-
-    conn = sqlite3.connect(ETF_DB)
-    cursor = conn.cursor()
-
-    cursor.execute('''
-        SELECT close_price, volume FROM etf_prices
-        WHERE ticker = ? ORDER BY date DESC LIMIT 1
-    ''', (ticker,))
-    result = cursor.fetchone()
-    
-    if result:
-        current_price, today_volume = result
-        print(f"✅ Haettu SQLitestä ETF:lle {ticker} - Hinta: {current_price}, Volyymi: {today_volume}")
-    else:
-        print(f"⚠️ DEBUG: Ei löydetty tietoja ETF:lle {ticker} SQLitestä.")
-        conn.close()
-        return ticker, None, 0  
-    
-    cursor.execute('''
-        SELECT AVG(volume) FROM etf_prices
-        WHERE ticker = ? AND date >= date('now', '-30 days')
-    ''', (ticker,))
-    avg_volume_30d = cursor.fetchone()[0] or 0  
-
-    conn.close()
-
-    try:
-        price_dropped, below_10d_avg, below_5d_avg = compare_etf_with_previous_data(ticker)
-    except Exception as e:
-        print(f"⚠️ DEBUG: Virhe compare_etf_with_previous_data:ssa ETF:lle {ticker}: {e}")
-        price_dropped, below_10d_avg, below_5d_avg = False, False, False  # **Oletusarvot**
-
-    rsi = get_rsi_etf(ticker)
-    if rsi is None:
-        print(f"❗ {ticker} - RSI on None, asetetaan arvoon 50.")
-        rsi = 50
-
-    macd, signal_line, histogram = get_macd_etf(ticker)
-    if macd is None or signal_line is None or histogram is None:
-        print(f"❗ {ticker} - MACD-arvoja ei voitu laskea, asetetaan neutraalit arvot.")
-        macd, signal_line, histogram = 0, 0, 0  
-
-    sma_50 = get_moving_average_etf(ticker, period=50)
-    sma_200 = get_moving_average_etf(ticker, period=200)
-
-    if sma_50 is None:
-        print(f"❗ {ticker} - SMA-50 ei saatavilla, käytetään viimeisintä päätöskurssia ({current_price:.2f}).")
-        sma_50 = current_price  
-
-    if sma_200 is None:
-        print(f"❗ {ticker} - SMA-200 ei saatavilla, käytetään viimeisintä päätöskurssia ({current_price:.2f}).")
-        sma_200 = current_price  
-
-    score = 0
-    decisions = []
-
-    if rsi < 20:
-        score += 5  # Pidetään korkea arvo, koska RSI < 20 on vahva signaali
-        decisions.append(f"🔥 RSI on erittäin alhainen ({rsi:.2f}) - mahdollinen vahva ostosignaali.")
-    elif rsi < 25:
-        score += 4
-        decisions.append(f"🔥 RSI on erittäin matala ({rsi:.2f}) - ETF voi olla aliarvostettu.")
-    elif rsi < 30:
-        score += 3
-        decisions.append(f"🔥 RSI on matala ({rsi:.2f}) - mahdollinen ostopaikka.")
-    elif rsi < 40:
-        score += 2
-        decisions.append(f"🔥 RSI on hieman matala ({rsi:.2f}) - ETF voi olla edullinen.")
-    elif rsi > 70:
-        score -= 5
-        decisions.append(f"⚠️ RSI on korkea ({rsi:.2f}) - ETF voi olla yliostettu.")
-
-    if histogram > 0.5:
-        score += 5  # Lasketaan max pistearvo yhdellä
-        decisions.append("🚀🚀 MACD-histogrammi kasvaa merkittävästi – erittäin vahva nousutrendi.")
-    elif histogram > 0:
-        score += 3
-        decisions.append("🚀 MACD-histogrammi on positiivinen – nousutrendi ennusteessa.")
-    elif histogram < -0.5:
-        score -= 5
-        decisions.append("⚠️ MACD-histogrammi laskee jyrkästi - mahdollinen laskutrendi.")
-
-    if current_price > sma_200:
-        score += 4  # Pidetään korkea, mutta ei +5
-        decisions.append(f"📈 ETF:n hinta on yli SMA-200 ({current_price:.2f} > {sma_200:.2f}) - vahva nousutrendi.")
-    elif current_price < sma_200:
-        score -= 5
-        decisions.append(f"⚠️ ETF:n hinta on alle SMA-200 ({current_price:.2f} < {sma_200:.2f}) - laskutrendi mahdollinen.")
-
-    if current_price > sma_50:
-        score += 2  # Alennetaan yhdellä
-        decisions.append(f"📈 ETF:n hinta on yli SMA-50 ({current_price:.2f} > {sma_50:.2f}) - lyhyen aikavälin nousutrendi.")
-    elif current_price < sma_50:
-        score -= 3
-        decisions.append(f"⚠️ ETF:n hinta on alle SMA-50 ({current_price:.2f} < {sma_50:.2f}) - lyhyen aikavälin laskutrendi.")
-
-    if sma_50 > sma_200:
-        score += 4  # Alennetaan yhdellä
-        decisions.append(f"📈 Kultainen risti havaittu: SMA-50 ({sma_50:.2f}) yli SMA-200 ({sma_200:.2f}).")
-    elif sma_50 < sma_200:
-        score -= 4
-        decisions.append(f"⚠️ Kuoleman risti havaittu: SMA-50 ({sma_50:.2f}) alle SMA-200 ({sma_200:.2f}).")
-
-    if price_dropped:
-        score += 2
-        decisions.append("📉 ETF:n hinta on laskenut edellisestä päivästä.")
-    if below_5d_avg:
-        score += 3
-        decisions.append("📊 ETF:n hinta on alle 5 päivän keskiarvon – mahdollinen ostotilaisuus.")
-    if below_10d_avg:
-        score += 5
-        decisions.append("📊 ETF:n hinta on alle 10 päivän keskiarvon – vahva ostosignaali.")
-
-    if avg_volume_30d and today_volume < avg_volume_30d * 0.2:
-        print(f"⚠️ {ticker}: Volyymi ({today_volume}) on merkittävästi matalampi kuin 30p keskiarvo ({avg_volume_30d}) – vähennetään 3 pistettä.")
-        score -= 3  
-
-    print(f"✅ {ticker}: Lopullinen pistemäärä {score}")
-
-    if score >= 22:  # Uusi kompromissitaso
-        decisions.append(f"🌟 Vahva ostosuositus: {score} pistettä!")
-    elif score >= 20:  # Pidetään kohtalaisen korkeana
-        decisions.append(f"⭐ ETF voi olla hyvä ostokohde ({score} pistettä).")
-    else:
-        print(f"🟡 {ticker}: Ostosuosituksia ei löytynyt.")
-        return ticker, None, score  # 🔹 Varmistetaan, että palautetaan selkeä arvo
-
-    return ticker, decisions if decisions else None, score
-
+### SENSUROITU ###
+    ##cencored
 def generate_etf_sell_decision(ticker, historical_prices, owned_etfs):
     """Analysoi ETF:n myyntimahdollisuudet pisteytysjärjestelmällä."""
     print(f"\n🔴🔍 Aloitetaan ETF-myyntianalyysi {ticker}")
@@ -2005,88 +1842,7 @@ def generate_etf_sell_decision(ticker, historical_prices, owned_etfs):
     score = 0
     decisions = []
 
-    if profit_percentage is not None:
-        if profit_percentage > 25:
-            if rsi > 70 or macd < signal_line:  # Varmistetaan, että myös RSI/MACD tukevat myyntiä
-                score += 10
-                decisions.append(f"💰💰💰 ETF:n tuotto on {profit_percentage:.2f} % - erittäin hyvä myyntipaikka.")
-        elif profit_percentage > 20:  
-            score += 5
-            decisions.append(f"💰 ETF:n tuotto on {profit_percentage:.2f} % - hyvä myyntipaikka.")
-        elif profit_percentage > 15:  
-            score += 3
-            decisions.append(f"📈 ETF on noussut {profit_percentage:.2f} % - mahdollinen myyntimahdollisuus.")
-        elif profit_percentage < -10:  
-            score += 5
-            decisions.append(f"⚠️ ETF on laskenut {profit_percentage:.2f} % - harkitse tappioiden minimoimista.")
-
-        elif profit_percentage > 10 and current_price < purchase_price * 1.10:
-            score += 7
-            decisions.append(f"⚠️ ETF oli noussut yli 20 %, mutta on nyt pudonnut takaisin +10 % tasolle – kannattaa harkita myyntiä.")
-
-    if rsi > 80:
-        score += 5
-        decisions.append(f"🚨 RSI on erittäin korkea ({rsi:.2f}) – ETF saattaa olla yliostettu.")
-    elif rsi > 70:
-        score += 3
-        decisions.append(f"📊 RSI on korkea ({rsi:.2f}) – mahdollinen myyntisignaali.")
-
-    if macd < signal_line:
-        score += 4
-        decisions.append("⚠️ MACD on alle signaalilinjan – laskutrendi vahvistuu.")
-    if histogram < -0.5:
-        score += 5
-        decisions.append("⚠️ MACD-histogrammi laskee jyrkästi - mahdollinen laskutrendi.")
-
-    if current_price < sma_50:
-        score += 3
-        decisions.append("📉 ETF:n hinta on alle 50 päivän keskiarvon – mahdollinen lyhyen aikavälin laskutrendi.")
-    if current_price < sma_200:
-        score += 5
-        decisions.append("⚠️ ETF:n hinta on alle 200 päivän keskiarvon – mahdollinen pitkäaikainen laskutrendi.")
-
-    if sma_50 is not None and sma_200 is not None:
-        if sma_50 < sma_200:
-            score += 5
-            decisions.append(f"⚠️ Kuoleman risti havaittu: SMA-50 ({sma_50:.2f}) alle SMA-200 ({sma_200:.2f}).")
-        elif sma_50 > sma_200:
-            score -= 5
-            decisions.append(f"📈 Kultainen risti havaittu: SMA-50 ({sma_50:.2f}) yli SMA-200 ({sma_200:.2f}).")
-
-    if current_price < historical_prices[-1]["Close"] * 0.95:
-        score += 4
-        decisions.append("📉 ETF:n hinta on laskenut yli 5 % yhden päivän aikana.")
-
-    if current_price < historical_prices[-1]["Close"] * 0.90:
-        score += 7
-        decisions.append("🚨 Kriittinen hinnanlasku – ETF:n arvo on pudonnut yli 10 %.")
-
-    if negative_news:
-        score += 4
-        decisions.append(f"⚠️ Negatiivisia uutisia löydetty ({', '.join(negative_news)}) – harkitse myyntiä.")
-
-    if critical_news:
-        score += 8
-        decisions.append(f"🆘 Kriittinen uutinen löydetty ({', '.join(critical_news)})! Välitön myyntisuositus!")
-
-    if negative_news and current_price < historical_prices[-1]["Close"] * 0.98:
-        score += 2
-        decisions.append(f"📉 Hinnanlasku negatiivisten uutisten jälkeen - vahvistaa myyntisuositusta!")
-
-    if critical_news and current_price < historical_prices[-1]["Close"] * 0.95:
-        score += 4
-        decisions.append(f"🚨 Kriittinen uutinen + hinnanlasku -> myynti erittäin suositeltavaa!")
-
-    print(f"✅ {ticker}: Myyntipistemäärä {score}")
-
-    if score >= 18:
-        decisions.append(f"🌟 Vahva myyntisuositus: {score} pistettä!")
-        return ticker, decisions, score
-    elif score >= 10:
-        decisions.append(f"⭐ ETF voi olla hyvä myyntikohde ({score} pistettä).")
-        return ticker, decisions, score
-    else:
-        return ticker, None, score
+   ###cencored
 
 def generate_buy_decision(asset, new_data, historical_prices):
     """Analysoi osakkeen ostomahdollisuudet pisteytysjärjestelmällä, suosien pitkän aikavälin sijoituksia."""
@@ -2115,285 +1871,7 @@ def generate_buy_decision(asset, new_data, historical_prices):
 
     conn.close()
 
-    try:
-        moving_avg_50 = get_moving_average(asset, period=50)  
-        moving_avg_200 = get_moving_average(asset, period=200)  
-        rsi = get_rsi(asset)  
-        macd, signal_line, histogram = get_macd(asset)  
-
-        print(f"📊 {asset} - RSI: {rsi}, MACD: {macd}, Signaalilinja: {signal_line}, Histogrammi: {histogram}")
-        print(f"📊 {asset} - 50 päivän liukuva keskiarvo: {moving_avg_50}, 200 päivän liukuva keskiarvo: {moving_avg_200}")
-
-    except Exception as e:
-        print(f"⚠️ DEBUG: Virhe teknisten indikaattoreiden haussa osakkeelle {asset}: {e}")
-        return asset, None, 0  
-
-    try:
-        if not isinstance(asset, str):
-            print(f"⚠️ ERROR: `asset` EI OLE merkkijono ennen fundamenttien hakua! Se on tyyppiä {type(asset)}")
-            return asset, None, 0
-            
-        a1, a2, earnings_growth, debt_to_equity = get_fundamentals(asset)
-        
-        try:
-            sector = get_sector(asset)
-            print(f"✅ {asset} kuuluu sektoriin: {sector}")
-        except Exception as e:
-            print(f"⚠️ DEBUG: Virhe sektorin haussa osakkeelle {asset}: {e}")
-            sector = "TUNTEMATON"
-
-        sector_avg_pe, sector_avg_pb = get_sector_averages(sector)
-
-        if not isinstance(sector_avg_pe, (int, float)) or sector_avg_pe <= 0:
-            sector_avg_pe = 15  
-
-        if not isinstance(sector_avg_pb, (int, float)) or sector_avg_pb <= 0:
-            sector_avg_pb = 2  
-
-        print(f"📊 {asset} - 30p volyymi-KA: {avg_volume_30d}, Sektori: {sector}, PE-keskiarvo: {sector_avg_pe}, PB-keskiarvo: {sector_avg_pb}")
-
-    except Exception as e:
-        asset_str = asset if 'asset' in locals() else 'TUNTEMATON'
-        print(f"⚠️ DEBUG: Virhe MYYNTIANALYYSISSÄ fundamenttitietojen haussa osakkeelle {asset_str}: {e}")
-
-    try:
-        price_dropped, below_10d_avg, below_5d_avg = compare_with_previous_data(asset, new_data)
-    except Exception as e:
-        print(f"⚠️ DEBUG: Virhe compare_with_previous_data:ssa osakkeelle {asset}: {e}")
-        return asset, None, 0  
-
-    volume_penalty = 0  # Alustetaan volyymipisteiden vaikutus
-
-    if avg_volume_30d is not None:
-        if today_volume == 0:
-            print(f"⚠️ {asset}: Volyymitieto näyttää 0 – tarkista osakkeen kaupankäynti ennen ostopäätöstä.")
-        elif today_volume < avg_volume_30d * 0.2:
-            print(f"⚠️ {asset}: Volyymi ({today_volume}) on merkittävästi matalampi kuin 30p keskiarvo ({avg_volume_30d}) – vähennetään 2 pistettä.")
-            volume_penalty = -2  # 🔥 Vähennetään pisteitä huonosta volyymistä
-
-    score = 0
-    decisions = []
-
-    if price_dropped:
-        score += 1
-        decisions.append("📉 Osakkeen hinta on laskenut viimeisimmästä sulkemishinnasta.")
-    if below_5d_avg:
-        score += 1
-        decisions.append("📉 Osakkeen hinta on alle 5 päivän liukuvan keskiarvon – mahdollinen ostotilaisuus.")
-    if below_10d_avg:
-        score += 2
-        decisions.append("📉 Osakkeen hinta on alle 10 päivän liukuvan keskiarvon – vahva ostosignaali.")
-
-    if rsi is not None:
-        if rsi < 40:
-            score += 2
-            decisions.append(f"🔥 RSI alhainen ({rsi:.2f}) - osake voi olla aliarvostettu.")
-        if rsi < 30:
-            score += 3
-            decisions.append(f"🔥 RSI erittäin alhainen ({rsi:.2f}) - mahdollinen erittäin vahva ostosignaali.")
-
-    if histogram > 0:
-        score += 2
-        decisions.append("🚀 MACD-histogrammi on positiivinen – nousutrendi ennusteessa.")
-    if histogram > 0.5:
-        score += 3
-        decisions.append("🚀🚀 MACD-histogrammi kasvaa merkittävästi – erittäin vahva nousutrendi.")
-
-    if moving_avg_50 and current_price < moving_avg_50:
-        score += 2
-        decisions.append(f"📊 Osakkeen hinta on alle 50 päivän liukuvan keskiarvon ({moving_avg_50:.2f}).")
-
-    if moving_avg_200 and current_price < moving_avg_200:
-        score += 3
-        decisions.append(f"📊 Osakkeen hinta on alle 200 päivän liukuvan keskiarvon ({moving_avg_200:.2f}) - pitkän aikavälin ostosignaali.")
-    
-    score += volume_penalty  
-
-    print(f"✅ {asset}: Pistemäärä {score}")
-
-    if score >= 18:
-        decisions.append(f"🌟 Vahva ostosuositus: {score} pistettä!")
-        return asset, decisions, score
-    elif score >= 15:
-        decisions.append(f"⭐ Pisteet: {score}, osake voi olla hyvä ostokohde.")
-        return asset, decisions, score
-    else:
-        return asset, None, score  # ✅ Varmistaa oikean palautusrakenteen
-
-def generate_sell_decision(asset, historical_prices, owned_assets):
-    """Analysoi osakkeen myyntimahdollisuudet, huomioiden hinnanmuutokset, volyymin, uutiset ja tekniset indikaattorit."""
-    print(f"\n🔴🔍 DEBUG: Aloitetaan myyntianalyysi osakkeelle {asset}")
-
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-
-    cursor.execute('''
-        SELECT close_price, volume FROM x1
-        WHERE ticker = ? ORDER BY datetime DESC LIMIT 1
-    ''', (asset,))
-    result = cursor.fetchone()
-    
-    if result:
-        current_price, today_volume = result
-    else:
-        print(f"⚠️ DEBUG: Ei löydetty tietoja osakkeelle {asset} SQLitestä.")
-        conn.close()
-        return asset, None, 0  
-
-    cursor.execute('''
-        SELECT AVG(volume) FROM x1
-        WHERE ticker = ? AND datetime >= date('now', '-30 days')
-    ''', (asset,))
-    avg_volume_30d = cursor.fetchone()[0] or 0  
-
-    conn.close()  # ✅ Suljetaan yhteys DB_FILE:een, koska sitä ei enää tarvita tässä funktiossa
-
-    conn_assets = sqlite3.connect("owned_assets.db")
-    cursor_assets = conn_assets.cursor()
-
-    cursor_assets.execute('''
-        SELECT purchase_price FROM owned_assets
-        WHERE ticker = ? LIMIT 1
-    ''', (asset,))
-    purchase_result = cursor_assets.fetchone()
-
-    if purchase_result:
-        purchase_price = purchase_result[0]
-        print(f"✅ Haettu ostohinta osakkeelle {asset} - Ostohinta: {purchase_price}")
-        profit_percentage = ((current_price - purchase_price) / purchase_price) * 100
-    else:
-        print(f"⚠️ Ei löytynyt ostohintaa osakkeelle {asset}.")
-        profit_percentage = None       
-
-    conn_assets.close()  # ✅ Suljetaan yhteys owned_assets.db:hen
-
-
-    if isinstance(historical_prices, float):
-        historical_prices = [historical_prices]  # Muutetaan yksittäinen arvo listaksi
-    elif not isinstance(historical_prices, list):
-        print(f"⚠️ ERROR: {asset} - historical_prices EI OLE LISTA! Se on {type(historical_prices)}")
-        return asset, None, 0  
-
-    if historical_prices and isinstance(historical_prices, list):
-        last_close_price = historical_prices[-1]  # Oletetaan, että lista sisältää suoraan päätöskursseja
-        print(f"✅ {asset} - Viimeisin sulkemishinta historiallisista tiedoista: {last_close_price}")
-    else:
-        print(f"⚠️ DEBUG: Ei saatavilla aiempia sulkemishintoja osakkeelle {asset}, ohitetaan analyysi.")
-        return asset, None, 0  
-
-    try:
-        rsi = get_rsi(asset)  
-        macd, signal_line, histogram = get_macd(asset)  
-        moving_avg_50 = get_moving_average(asset, period=50)  
-        moving_avg_200 = get_moving_average(asset, period=200)  
-
-        print(f"📊 {asset} - RSI: {rsi}, MACD: {macd}, Signaalilinja: {signal_line}, Histogrammi: {histogram}")
-        print(f"📊 {asset} - 50 päivän liukuva keskiarvo: {moving_avg_50}, 200 päivän liukuva keskiarvo: {moving_avg_200}")
-
-    except Exception as e:
-        print(f"⚠️ DEBUG: Virhe indikaattoreiden haussa osakkeelle {asset}: {e}")
-        return asset, None, 0  
-
-    negative_news = []
-    critical_news = []
-
-    if asset in owned_assets:  # ✅ Tarkistetaan vain osakkeet, ei ETF:t
-        news_articles, negative_news, critical_news = fetch_stock_news(asset, owned_assets)
-
-        if not isinstance(news_articles, list):
-            print(f"⚠️ ERROR: Uutislista ei ole lista: {type(news_articles)} - {news_articles}")
-            news_articles = []
-
-        if news_articles:
-            analyzed_negative_news, analyzed_critical_news = analyze_news_sentiment(news_articles)
-            
-            if isinstance(analyzed_negative_news, list) and isinstance(analyzed_critical_news, list):
-                negative_news.extend(analyzed_negative_news)
-                critical_news.extend(analyzed_critical_news)
-            else:
-                print(f"⚠️ ERROR: Uutisanalyysi palautti odottamattoman tyypin: "
-                    f"{type(analyzed_negative_news)}, {type(analyzed_critical_news)}")
-
-    score = 0
-    decisions = []
-
-    if profit_percentage is not None:
-        if profit_percentage > 25:
-            if rsi > 70 or macd < signal_line:
-                score += 10
-                decisions.append(f"💰💰💰 Osakkeen tuotto on {profit_percentage:.2f} % - erittäin hyvä myyntipaikka.")
-        elif profit_percentage > 20:  
-            score += 5
-            decisions.append(f"💰 Osakkeen tuotto on {profit_percentage:.2f} % - hyvä myyntipaikka.")
-        elif profit_percentage > 15:  
-            score += 3
-            decisions.append(f"📈 Osake on noussut {profit_percentage:.2f} % - mahdollinen myyntimahdollisuus.")
-        elif profit_percentage < -10:  
-            score += 5
-            decisions.append(f"⚠️ Osake on laskenut {profit_percentage:.2f} % - harkitse tappioiden minimoimista.")
-
-        elif profit_percentage > 10 and current_price < purchase_price * 1.10:
-            score += 7
-            decisions.append(f"⚠️ Osake oli noussut yli 20 %, mutta on nyt pudonnut takaisin +10 % tasolle – kannattaa harkita myyntiä.")
-
-    if current_price < last_close_price * 0.97:
-        score += 3
-        decisions.append(f"🚨 Hinnanlasku {current_price:.2f} (-{(1 - current_price / last_close_price) * 100:.2f}%) - myyntisuositus!")
-
-    if current_price < last_close_price * 0.95:
-        score += 5
-        decisions.append(f"⚠️ Kriittinen hinnanlasku {current_price:.2f} (-{(1 - current_price / last_close_price) * 100:.2f}%) viimeisen tunnin aikana - vahva myyntisuositus!")
-
-    if current_price < last_close_price * 0.90:
-        score += 8
-        decisions.append(f"🆘 Romahdus! Hinnanlasku {current_price:.2f} (-{(1 - current_price / last_close_price) * 100:.2f}%) päivän aikana - myynti heti!")
-
-    if avg_volume_30d and today_volume > avg_volume_30d * 3 and current_price < last_close_price:
-        score += 2
-        decisions.append(f"⚠️ Korkea myyntipaine: Volyymi {today_volume}, yli 3x keskiarvon ({avg_volume_30d}) ja hinta laskee.")
-
-    if moving_avg_50 and moving_avg_200 and moving_avg_50 < moving_avg_200:
-        score += 7
-        decisions.append(f"⚠️ Kuoleman risti havaittu: 50 päivän liukuva keskiarvo ({moving_avg_50:.2f}) alittaa 200 päivän keskiarvon ({moving_avg_200:.2f}).")
-
-    if critical_news:
-        score += 10
-        decisions.append(f"🆘 Kriittinen uutinen löydetty ({', '.join(critical_news)})! Välitön myyntisuositus!")
-
-    if negative_news:
-        score += 5
-        decisions.append(f"⚠️ Negatiivisia uutisia löydetty ({', '.join(negative_news)}) – harkitse myyntiä.")
-
-    if negative_news and current_price < last_close_price * 0.98:
-        score += 3
-        decisions.append(f"📉 Hinnanlasku negatiivisten uutisten jälkeen - vahvistaa myyntisuositusta!")
-
-    if critical_news and current_price < last_close_price * 0.95:
-        score += 5
-        decisions.append(f"🚨 Kriittinen uutinen + hinnanlasku -> myynti erittäin suositeltavaa!")
-
-    if histogram < 0:
-        score += 2
-        decisions.append("📉 MACD-histogrammi negatiivinen – laskutrendi vahvistuu.")
-    if histogram < -0.5:
-        score += 3
-        decisions.append("📉📉 MACD-histogrammi laskee merkittävästi – erittäin vahva laskutrendi.")
-
-    if current_price > last_close_price * 1.03 and macd < signal_line and rsi < 50:
-        score += 3
-        decisions.append(f"⚠️ Kuolleen kissan pomppu havaittu – varo mahdollista uutta laskua!")
-
-    print(f"✅ {asset}: Myyntipistemäärä {score}")
-
-    if score >= 15:
-        decisions.append(f"🌟 Vahva myyntisuositus: {score} pistettä!")
-        return asset, decisions, score
-    elif score >= 10:
-        decisions.append(f"⭐ Pisteet: {score} pistettä – osake voi olla hyvä myyntikohde.")
-        return asset, decisions, score
-    else:
-        print(f"⚠️ DEBUG: {asset}: Myyntisuosituksia ei löytynyt.")
-        return asset, None, score  
+    ###SENSUROITU osto ja myyntianalyysit
 
 def generate_decision_message(asset, buy_decisions, sell_decisions, news_risk_message):
     message = ""
@@ -2459,13 +1937,11 @@ async def send_telegram_message(message):
             await asyncio.sleep(2)  # Odotetaan ennen seuraavaa yritystä
 
 def extract_score(decisions):
-    """Hakee pisteet suositustekstistä ja palauttaa korkeimman arvon."""
     score_pattern = re.compile(r"(\d+) pistettä")
     scores = [int(match.group(1)) for rec in decisions for match in score_pattern.finditer(rec)]
     return max(scores, default=0)
 
 async def main():
-    """Pääohjelma, joka hakee osaketiedot ja analysoi ne."""
     await load_credentials()
     display_banner()
     
@@ -2701,20 +2177,19 @@ async def main():
 run_count = 0  # Lasketaan ajokertoja
 
 async def run_scheduled_task():
-    """Toistaa analyysin aina sen päätyttyä ja odottaa 30 minuuttia ennen seuraavaa suoritusta."""
     global start_time, running_task, run_count
     while True:
         try:
             now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             print(f"\n🚀 Ohjelma käynnistyy: {now}")
             start_time = time.time()
-            running_task = asyncio.create_task(main())  # Luo tehtävän
-            await running_task  # Odotetaan tehtävän valmistumista
+            running_task = asyncio.create_task(main())  
+            await running_task  
             duration = time.time() - start_time
             minutes = duration // 60
             seconds = duration % 60
             end_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            run_count += 1  # Kasvata ajokertojen laskuria
+            run_count += 1 
 
             print(f"✅ Suoritus päättyi: {end_time}")
             print(f"🔁 Tämä oli ajokerta numero {run_count}.")
@@ -2729,7 +2204,6 @@ async def run_scheduled_task():
         await asyncio.sleep(30 * 60)
 
 def handle_sigint(signum, frame):
-    """ Käsittelee `Ctrl+C`-keskeytyksen ja sulkee ohjelman siististi. """
     global running_task
     duration = time.time() - start_time if start_time else 0
     print(f"\n🔴 Ohjelma lopetettiin käyttäjän toimesta (`Ctrl+C`) {duration:.2f} sekunnin jälkeen.")
@@ -2750,7 +2224,6 @@ def handle_sigint(signum, frame):
     sys.exit(0)
 
 def handle_sigtstp(signum, frame):
-    """Käsittelee `Ctrl+Z`-keskeytyksen ja antaa huomion sekä jatkamisen ohjeen."""
     duration = time.time() - start_time if start_time else 0
     print(f"\n🟡 Ohjelma keskeytettiin tilapäisesti (`Ctrl+Z`) {duration:.2f} sekunnin jälkeen.")
     print("ℹ️ Jatka suoritusta komennolla: `fg`")
